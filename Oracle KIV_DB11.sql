@@ -61,6 +61,7 @@ CREATE TABLE PROVOZOVNA(
     jmeno_vedouci VARCHAR2(30 CHAR) NOT NULL,
     prijmeni_vedouci VARCHAR2(30 CHAR) NOT NULL,
     cislo_telefonni VARCHAR2(11 CHAR) NOT NULL,
+    email VARCHAR2(50 CHAR) NOT NULL,
     mesto VARCHAR2(30 CHAR) NOT NULL,
     ulice VARCHAR2(30 CHAR) NOT NULL,
     cislo_popisne VARCHAR2(10 CHAR) NOT NULL,
@@ -74,16 +75,17 @@ ALTER TABLE PROVOZOVNA
 
 CREATE TABLE DPH(
      k_dph INTEGER PRIMARY KEY,
-     hodnota_dph FLOAT(2) NOT NULL
+     hodnota_dph FLOAT(5) NOT NULL
 );
 
 CREATE TABLE PRODUKT(
     c_produkt INTEGER PRIMARY KEY,
-    nazev VARCHAR2(60 CHAR) NOT NULL,
-    cena_baz_dph NUMBER(2) NOT NULL,
-    cena_s_dph NUMBER(2) NOT NULL,
+    nazev VARCHAR2(100 CHAR) NOT NULL,
+    cena_bez_dph NUMBER(*, 2) NOT NULL,
+    /*cena_s_dph NUMBER(*, 2) AS (SELECT hodnota_dph FROM dph WHERE k_dph = c_dph),*/
+    /*cena_s_dph NUMBER(*, 2) AS (cena_bez_dph * 10(SELECT hodnota_dph FROM dph WHERE k_dph = c_dph)),*/
     c_provozovna INTEGER NOT NULL,
-    k_dph INTEGER NOT NULL
+    c_dph INTEGER NOT NULL
 );
 
 ALTER TABLE PRODUKT
@@ -91,16 +93,16 @@ ALTER TABLE PRODUKT
         REFERENCES PROVOZOVNA(c_provozovna);
         
 ALTER TABLE PRODUKT
-    ADD CONSTRAINT produkt_dph_fk FOREIGN KEY (k_dph)
+    ADD CONSTRAINT produkt_dph_fk FOREIGN KEY (c_dph)
         REFERENCES DPH(k_dph);
 
 CREATE TABLE POLOZKA_OBJEDNAVKY(
     c_polozka INTEGER PRIMARY KEY,
     pocet INTEGER NOT NULL,
-    cena_ks_bez_dph NUMBER(2) NOT NULL,
-    cena_ks_s_dph NUMBER(2) NOT NULL,
-    cena_celkem_bez_dph NUMBER(2) NOT NULL,
-    cena_celkem_s_dph NUMBER(2) NOT NULL,
+    /*cena_ks_bez_dph NUMBER(*, 2),
+    cena_ks_s_dph NUMBER(*, 2),
+    cena_celkem_bez_dph NUMBER(*, 2),
+    cena_celkem_s_dph NUMBER(*, 2),*/
     c_objednavka INTEGER NOT NULL,
     c_produkt INTEGER NOT NULL
 );
@@ -124,7 +126,7 @@ CREATE TABLE STAV(
 );
 
 CREATE TABLE ZPUSOB_PLATBY(
-    k_pladba INTEGER PRIMARY KEY,
+    k_platba INTEGER PRIMARY KEY,
     nazev_paltba VARCHAR2(20 CHAR) NOT NULL
 );
 
@@ -132,8 +134,8 @@ CREATE TABLE OBJEDNAVKA(
     c_objednavka INTEGER PRIMARY KEY,
     cas_zadani TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     cas_vyrizeni TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    cena_celkem_bez_dph NUMBER(2) NOT NULL,
-    cena_celkem_s_dph NUMBER(2) NOT NULL,
+    /*cena_celkem_bez_dph NUMBER(*, 2),*/
+    /*cena_celkem_s_dph NUMBER(*, 2),*/
     c_zakaznik INTEGER NOT NULL,
     c_provozovna INTEGER NOT NULL,
     c_smena INTEGER NOT NULL,
@@ -160,17 +162,130 @@ ALTER TABLE OBJEDNAVKA
 ALTER TABLE OBJEDNAVKA
     ADD CONSTRAINT objednavka_zpusob_platby_fk FOREIGN KEY (k_zpusob_platby)
         REFERENCES ZPUSOB_PLATBY(k_platba);
+        
+/* -------------------- Vlozeni dat do tabulek ---------------------- */
+/* -------------------- Naplneni èíselníkù -------------------------- */
+INSERT ALL
+    INTO zpusob_platby VALUES (10, 'hotovost')
+    INTO zpusob_platby VALUES (20, 'karta')
+    INTO zpusob_platby VALUES (30, 'stravenky')
+SELECT 1 FROM DUAL;    
+
+INSERT ALL
+    INTO stav VALUES (10, 'doruceno')
+    INTO stav VALUES (20, 'zadano')
+    INTO stav VALUES (30, 'zruseno')
+SELECT 1 FROM DUAL; 
+
+INSERT ALL
+    INTO dph VALUES (10, 10)
+    INTO dph VALUES (20, 15)
+    INTO dph VALUES (30, 21)
+SELECT 1 FROM DUAL; 
+/* --------------------- Mesto --------------------------------------- */
+INSERT INTO mesto VALUES (1, 'Plzeò', 'Petr', 'Kupka', '789 823 946', 'Plzeò', 'Jateèní', '2698', '301 00');
+/* --------------------- Ostatni ------------------------------------- */
+
+INSERT ALL
+    INTO zakaznik VALUES (1, 'Pavel', 'Novák','Password01', '723 487 691', 'pavel.novak@gmail.com', 'Plzeò', 'V Bezovce', '1909/4', '301 00')
+    INTO zakaznik VALUES (2, 'Michal', 'Malík', 'ASDfg9036', '798 124 258', 'mmalik@gmail.com', 'Plzeò', 'Doudlevecká', '235/18', '301 00')
+    INTO zakaznik VALUES (3, 'Josef', 'Èerný', 'C0p7kB1c6J53mS1M0h1', '606 548 354', 'black.pepa@centrum.cz', 'Plzeò', 'V Lomech', '1032/9a', '323 00')
+SELECT 1 FROM DUAL; 
+
+INSERT ALL
+    INTO kuryr VALUES (1, 'Michal', 'Havlíèek', '723 894 186', 'michaelhavlis@gmail.com', 'Plzeò', 'Jetelová', '1737/13', '326 00', 1)
+    INTO kuryr VALUES (2, 'Adam', 'Urban', '715 175 179', 'adam.urban@seznam.cz', 'Plzeò', 'Raisova', '2205/33', '301 00', 1)
+    INTO kuryr VALUES (3, 'Štìpán', 'Ošlejšek', '726 752 751', 'sepai.stepulin@gmail.com', 'Plzeò', 'Bolevecká', '914/32', '301 00', 1)
+SELECT 1 FROM DUAL; 
+
+INSERT ALL
+    INTO auto VALUES (1, '2P99461', TO_DATE('20-09-2017'), 1)
+    INTO auto VALUES (2, '4P90888', TO_DATE('20-10-2018'), 1)
+    INTO auto VALUES (3, '5P57785', TO_DATE('03-10-2018'), 1)
+SELECT 1 FROM DUAL; 
+
+INSERT ALL
+    INTO provozovna VALUES (1, '01415212', 'Uctívaný Velbloud', 'Filip', 'Franta', '377 224 897', 'info@uctivanyvelbloud.cz', 'Plzeò', 'Americká', '778/20', '301 00', 1)
+    INTO provozovna VALUES (2, '29422168', 'LOKÁL Pod Divadlem', 'Jakub', 'Toth', '778 726 191', 'poddivadlem@ambi.cz', 'Plzeò', 'Bezruèova', '315/34', '301 00', 1)
+    INTO provozovna VALUES (3, '25348758', 'ALANYA KEBAB', 'Jakub', 'Neubauer', '725 665 801', 'alanya.kebab@gmail.com', 'Plzeò', 'Rooseveltova', '9/7', '301 00', 1)
+SELECT 1 FROM DUAL; 
+
+INSERT ALL
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (1, 'Hovìzí svíèková na smetanì, kynutý knedlík', 152.15, 1, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (2, 'Hovìzí tatarák z mladého býèka, 4 ks topinek', 158.10, 1, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (3, 'Pilsner Urquell 12° z tanku', 38.71, 1, 30)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (4, 'Øízek z vepøové kotlety smažený na másle ', 177.65, 2, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (5, 'Steak z vepøové krkovice s hoøèiènou omáèkou', 237.15, 2, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (6, 'Žloutkový vìneèek', 62.1, 2, 10)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (7, '2x Dürüm s masem + 2x Coca-Cola 330ml', 214.2, 3, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (8, 'Coca-Cola - DÜRÜM MENU', 184.45, 3, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (9, 'Lahmacun s masem a sýrem ', 130.05, 3, 20)
+SELECT 1 FROM DUAL;
+
+INSERT ALL
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (1, TO_TIMESTAMP('31-08-2021 09:59:24'), TO_TIMESTAMP('31-08-2021 16:13:41'), 1, 1)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (2, TO_TIMESTAMP('10-09-2021 15:48:47'), TO_TIMESTAMP('10-09-2021 22:01:12'), 1, 1)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (3, TO_TIMESTAMP('20-10-2021 10:02:15'), TO_TIMESTAMP('20-10-2021 21:48:18'), 1, 3)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (4, TO_TIMESTAMP('02-09-2021 09:55:27'), TO_TIMESTAMP('02-09-2021 17:24:53'), 2, 2)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (5, TO_TIMESTAMP('14-09-2021 08:58:36'), TO_TIMESTAMP('14-09-2021 20:51:42'), 2, 2)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (6, TO_TIMESTAMP('22-09-2021 10:00:03'), TO_TIMESTAMP('22-09-2021 18:06:19'), 2, 1)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (7, TO_TIMESTAMP('01-09-2021 15:59:54'), TO_TIMESTAMP('01-09-2021 21:58:15'), 3, 3)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (8, TO_TIMESTAMP('17-09-2021 16:03:52'), TO_TIMESTAMP('17-09-2021 22:32:05'), 3, 2)
+    INTO smena (c_smena, zacatek, konec, c_kuryr, c_auto) VALUES (9, TO_TIMESTAMP('02-10-2021 16:24:53'), TO_TIMESTAMP('02-10-2021 20:54:47'), 3, 1)
+SELECT 1 FROM DUAL;
+
+INSERT ALL
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (1, TO_TIMESTAMP('31-08-2021 11:25:45'), TO_TIMESTAMP('31-08-2021 11:50:49'), 1, 1, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (2, TO_TIMESTAMP('31-08-2021 13:49:02'), TO_TIMESTAMP('31-08-2021 14:35:20'), 2, 2, 1, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (3, TO_TIMESTAMP('31-08-2021 12:30:21'), TO_TIMESTAMP('31-08-2021 13:07:50'), 3, 1, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (4, TO_TIMESTAMP('10-09-2021 17:31:25'), TO_TIMESTAMP('10-09-2021 17:56:12'), 1, 3, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (5, TO_TIMESTAMP('10-09-2021 18:05:32'), TO_TIMESTAMP('10-09-2021 18:21:14'), 2, 2, 1, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (6, TO_TIMESTAMP('10-09-2021 20:20:20'), TO_TIMESTAMP('10-09-2021 20:54:19'), 3, 3, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (7, TO_TIMESTAMP('20-10-2021 11:45:54'), TO_TIMESTAMP('20-10-2021 12:09:15'), 1, 1, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (8, TO_TIMESTAMP('20-10-2021 14:15:23'), TO_TIMESTAMP('20-10-2021 14:54:11'), 2, 2, 1, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (9, TO_TIMESTAMP('20-10-2021 20:14:14'), TO_TIMESTAMP('20-10-2021 20:54:48'), 3, 3, 1, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (10, TO_TIMESTAMP('02-09-2021 10:52:12'), TO_TIMESTAMP('02-09-2021 11:25:31'), 1, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (11, TO_TIMESTAMP('02-09-2021 12:43:13'), TO_TIMESTAMP('02-09-2021 13:12:45'), 2, 2, 2, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (12, TO_TIMESTAMP('02-09-2021 15:12:51'), TO_TIMESTAMP('02-09-2021 15:45:41'), 3, 1, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (13, TO_TIMESTAMP('14-09-2021 09:52:15'), TO_TIMESTAMP('14-09-2021 10:12:55'), 1, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (14, TO_TIMESTAMP('14-09-2021 12:12:52'), TO_TIMESTAMP('14-09-2021 12:51:12'), 2, 2, 2, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (15, TO_TIMESTAMP('14-09-2021 18:25:52'), TO_TIMESTAMP('14-09-2021 19:02:15'), 3, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (16, TO_TIMESTAMP('22-09-2021 11:52:51'), TO_TIMESTAMP('22-09-2021 12:22:15'), 1, 1, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (17, TO_TIMESTAMP('22-09-2021 13:25:16'), TO_TIMESTAMP('22-09-2021 13:59:18'), 2, 2, 2, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (18, TO_TIMESTAMP('22-09-2021 16:48:37'), TO_TIMESTAMP('22-09-2021 17:23:19'), 3, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (19, TO_TIMESTAMP('01-09-2021 16:12:42'), TO_TIMESTAMP('01-09-2021 16:42:19'), 1, 1, 3, 10, 30)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (20, TO_TIMESTAMP('01-09-2021 18:09:15'), TO_TIMESTAMP('01-09-2021 18:59:08'), 2, 2, 3, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (21, TO_TIMESTAMP('01-09-2021 19:00:48'), TO_TIMESTAMP('01-09-2021 19:42:00'), 3, 3, 3, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (22, TO_TIMESTAMP('17-09-2021 16:45:29'), TO_TIMESTAMP('17-09-2021 17:09:45'), 1, 3, 3, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (23, TO_TIMESTAMP('17-09-2021 18:43:18'), TO_TIMESTAMP('17-09-2021 19:05:14'), 2, 2, 3, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (24, TO_TIMESTAMP('17-09-2021 19:14:51'), TO_TIMESTAMP('17-09-2021 19:58:15'), 3, 1, 3, 10, 30)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (25, TO_TIMESTAMP('02-10-2021 17:01:15'), TO_TIMESTAMP('02-10-2021 17:37:17'), 1, 3, 3, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (26, TO_TIMESTAMP('02-10-2021 18:41:18'), TO_TIMESTAMP('02-10-2021 19:08:50'), 2, 2, 3, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (27, TO_TIMESTAMP('02-10-2021 19:41:51'), TO_TIMESTAMP('02-10-2021 19:50:04'), 3, 3, 3, 20, 10)
+    
+    /*INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (4, TO_TIMESTAMP('31-08-2021 13:49:02'), TO_TIMESTAMP('31-08-2021 14:35:20'), 1, 1, 1, 10, 20)*/
+SELECT 1 FROM DUAL;
+
+/*INTO polozka_objednavky (c_polozka, pocet, c_objednavka, c_produkt) VALUES ()*/
+
+SELECT hodnota_dph FROM dph WHERE k_dph = 30;
 
 /* -------------------- Smazani tabulek ----------------------------- */
-DROP TABLE MESTO;
-DROP TABLE KURYR;
-DROP TABLE AUTO;
-DROP TABLE SMENA;
-DROP TABLE PROVOZOVNA;
-DROP TABLE DPH;
-DROP TABLE POLOZKA;
+DROP TABLE OBJEDNAVKA;
 DROP TABLE POLOZKA_OBJEDNAVKY;
+DROP TABLE PRODUKT;
 DROP TABLE ZAKAZNIK;
 DROP TABLE STAV;
 DROP TABLE ZPUSOB_PLATBY;
-DROP TABLE OBJEDNAVKA;
+DROP TABLE SMENA;
+DROP TABLE DPH;
+DROP TABLE PROVOZOVNA;
+DROP TABLE KURYR;
+DROP TABLE AUTO;
+DROP TABLE MESTO;
+
+
+
+
+
+
