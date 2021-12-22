@@ -39,8 +39,8 @@ ALTER TABLE AUTO
 
 CREATE TABLE SMENA(
     c_smena INTEGER PRIMARY KEY,
-    zacatek TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    konec TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    zacatek TIMESTAMP(0) NOT NULL,
+    konec TIMESTAMP(0) NOT NULL,
     vydelek NUMBER(2),
     c_kuryr INTEGER NOT NULL,
     c_auto INTEGER NOT NULL
@@ -99,8 +99,8 @@ ALTER TABLE PRODUKT
 CREATE TABLE POLOZKA_OBJEDNAVKY(
     c_polozka INTEGER PRIMARY KEY,
     pocet INTEGER NOT NULL,
-    /*cena_ks_bez_dph NUMBER(*, 2),
-    cena_ks_s_dph NUMBER(*, 2),
+    /*cena_ks_bez_dph NUMBER(*, 2) AS (SUM(SELECT cena_bez_dph FROM produkt GROUP BY cena_bez_dph)),
+    /*cena_ks_s_dph NUMBER(*, 2),
     cena_celkem_bez_dph NUMBER(*, 2),
     cena_celkem_s_dph NUMBER(*, 2),*/
     c_objednavka INTEGER NOT NULL,
@@ -132,8 +132,8 @@ CREATE TABLE ZPUSOB_PLATBY(
 
 CREATE TABLE OBJEDNAVKA(
     c_objednavka INTEGER PRIMARY KEY,
-    cas_zadani TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    cas_vyrizeni TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cas_zadani TIMESTAMP(0) NOT NULL,
+    cas_vyrizeni TIMESTAMP(0) NOT NULL,
     /*cena_celkem_bez_dph NUMBER(*, 2),*/
     /*cena_celkem_s_dph NUMBER(*, 2),*/
     c_zakaznik INTEGER NOT NULL,
@@ -238,37 +238,147 @@ INSERT ALL
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (1, TO_TIMESTAMP('31-08-2021 11:25:45'), TO_TIMESTAMP('31-08-2021 11:50:49'), 1, 1, 1, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (2, TO_TIMESTAMP('31-08-2021 13:49:02'), TO_TIMESTAMP('31-08-2021 14:35:20'), 2, 2, 1, 10, 20)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (3, TO_TIMESTAMP('31-08-2021 12:30:21'), TO_TIMESTAMP('31-08-2021 13:07:50'), 3, 1, 1, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (4, TO_TIMESTAMP('10-09-2021 17:31:25'), TO_TIMESTAMP('10-09-2021 17:56:12'), 1, 3, 1, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (5, TO_TIMESTAMP('10-09-2021 18:05:32'), TO_TIMESTAMP('10-09-2021 18:21:14'), 2, 2, 1, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (6, TO_TIMESTAMP('10-09-2021 20:20:20'), TO_TIMESTAMP('10-09-2021 20:54:19'), 3, 3, 1, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (7, TO_TIMESTAMP('20-10-2021 11:45:54'), TO_TIMESTAMP('20-10-2021 12:09:15'), 1, 1, 1, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (8, TO_TIMESTAMP('20-10-2021 14:15:23'), TO_TIMESTAMP('20-10-2021 14:54:11'), 2, 2, 1, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (9, TO_TIMESTAMP('20-10-2021 20:14:14'), TO_TIMESTAMP('20-10-2021 20:54:48'), 3, 3, 1, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (10, TO_TIMESTAMP('02-09-2021 10:52:12'), TO_TIMESTAMP('02-09-2021 11:25:31'), 1, 3, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (11, TO_TIMESTAMP('02-09-2021 12:43:13'), TO_TIMESTAMP('02-09-2021 13:12:45'), 2, 2, 2, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (12, TO_TIMESTAMP('02-09-2021 15:12:51'), TO_TIMESTAMP('02-09-2021 15:45:41'), 3, 1, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (13, TO_TIMESTAMP('14-09-2021 09:52:15'), TO_TIMESTAMP('14-09-2021 10:12:55'), 1, 3, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (14, TO_TIMESTAMP('14-09-2021 12:12:52'), TO_TIMESTAMP('14-09-2021 12:51:12'), 2, 2, 2, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (15, TO_TIMESTAMP('14-09-2021 18:25:52'), TO_TIMESTAMP('14-09-2021 19:02:15'), 3, 3, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (16, TO_TIMESTAMP('22-09-2021 11:52:51'), TO_TIMESTAMP('22-09-2021 12:22:15'), 1, 1, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (17, TO_TIMESTAMP('22-09-2021 13:25:16'), TO_TIMESTAMP('22-09-2021 13:59:18'), 2, 2, 2, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (18, TO_TIMESTAMP('22-09-2021 16:48:37'), TO_TIMESTAMP('22-09-2021 17:23:19'), 3, 3, 2, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (19, TO_TIMESTAMP('01-09-2021 16:12:42'), TO_TIMESTAMP('01-09-2021 16:42:19'), 1, 1, 3, 10, 30)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (20, TO_TIMESTAMP('01-09-2021 18:09:15'), TO_TIMESTAMP('01-09-2021 18:59:08'), 2, 2, 3, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (21, TO_TIMESTAMP('01-09-2021 19:00:48'), TO_TIMESTAMP('01-09-2021 19:42:00'), 3, 3, 3, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (22, TO_TIMESTAMP('17-09-2021 16:45:29'), TO_TIMESTAMP('17-09-2021 17:09:45'), 1, 3, 3, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (23, TO_TIMESTAMP('17-09-2021 18:43:18'), TO_TIMESTAMP('17-09-2021 19:05:14'), 2, 2, 3, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (24, TO_TIMESTAMP('17-09-2021 19:14:51'), TO_TIMESTAMP('17-09-2021 19:58:15'), 3, 1, 3, 10, 30)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (25, TO_TIMESTAMP('02-10-2021 17:01:15'), TO_TIMESTAMP('02-10-2021 17:37:17'), 1, 3, 3, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (26, TO_TIMESTAMP('02-10-2021 18:41:18'), TO_TIMESTAMP('02-10-2021 19:08:50'), 2, 2, 3, 10, 20)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (27, TO_TIMESTAMP('02-10-2021 19:41:51'), TO_TIMESTAMP('02-10-2021 19:50:04'), 3, 3, 3, 20, 10)
-    
-    /*INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (4, TO_TIMESTAMP('31-08-2021 13:49:02'), TO_TIMESTAMP('31-08-2021 14:35:20'), 1, 1, 1, 10, 20)*/
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (4, TO_TIMESTAMP('10-09-2021 17:31:25'), TO_TIMESTAMP('10-09-2021 17:56:12'), 1, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (5, TO_TIMESTAMP('10-09-2021 18:05:32'), TO_TIMESTAMP('10-09-2021 18:21:14'), 2, 2, 2, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (6, TO_TIMESTAMP('10-09-2021 20:20:20'), TO_TIMESTAMP('10-09-2021 20:54:19'), 3, 3, 2, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (7, TO_TIMESTAMP('20-10-2021 11:45:54'), TO_TIMESTAMP('20-10-2021 12:09:15'), 1, 1, 3, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (8, TO_TIMESTAMP('20-10-2021 14:15:23'), TO_TIMESTAMP('20-10-2021 14:54:11'), 2, 2, 3, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (9, TO_TIMESTAMP('20-10-2021 20:14:14'), TO_TIMESTAMP('20-10-2021 20:54:48'), 3, 3, 3, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (10, TO_TIMESTAMP('02-09-2021 10:52:12'), TO_TIMESTAMP('02-09-2021 11:25:31'), 1, 3, 4, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (11, TO_TIMESTAMP('02-09-2021 12:43:13'), TO_TIMESTAMP('02-09-2021 13:12:45'), 3, 2, 4, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (12, TO_TIMESTAMP('02-09-2021 15:12:51'), TO_TIMESTAMP('02-09-2021 15:45:41'), 2, 1, 4, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (13, TO_TIMESTAMP('14-09-2021 09:52:15'), TO_TIMESTAMP('14-09-2021 10:12:55'), 1, 3, 5, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (14, TO_TIMESTAMP('14-09-2021 12:12:52'), TO_TIMESTAMP('14-09-2021 12:51:12'), 2, 2, 5, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (15, TO_TIMESTAMP('14-09-2021 18:25:52'), TO_TIMESTAMP('14-09-2021 19:02:15'), 3, 3, 5, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (16, TO_TIMESTAMP('22-09-2021 11:52:51'), TO_TIMESTAMP('22-09-2021 12:22:15'), 1, 1, 6, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (17, TO_TIMESTAMP('22-09-2021 13:25:16'), TO_TIMESTAMP('22-09-2021 13:59:18'), 3, 2, 6, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (18, TO_TIMESTAMP('22-09-2021 16:48:37'), TO_TIMESTAMP('22-09-2021 17:23:19'), 2, 3, 6, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (19, TO_TIMESTAMP('01-09-2021 16:12:42'), TO_TIMESTAMP('01-09-2021 16:42:19'), 1, 1, 7, 10, 30)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (20, TO_TIMESTAMP('01-09-2021 18:09:15'), TO_TIMESTAMP('01-09-2021 18:59:08'), 2, 2, 7, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (21, TO_TIMESTAMP('01-09-2021 19:00:48'), TO_TIMESTAMP('01-09-2021 19:42:00'), 3, 3, 7, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (22, TO_TIMESTAMP('17-09-2021 16:45:29'), TO_TIMESTAMP('17-09-2021 17:09:45'), 1, 3, 8, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (23, TO_TIMESTAMP('17-09-2021 18:43:18'), TO_TIMESTAMP('17-09-2021 19:05:14'), 2, 2, 8, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (24, TO_TIMESTAMP('17-09-2021 19:14:51'), TO_TIMESTAMP('17-09-2021 19:58:15'), 3, 1, 8, 10, 30)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (25, TO_TIMESTAMP('02-10-2021 17:01:15'), TO_TIMESTAMP('02-10-2021 17:37:17'), 1, 3, 9, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (26, TO_TIMESTAMP('02-10-2021 18:41:18'), TO_TIMESTAMP('02-10-2021 19:08:50'), 3, 2, 9, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (27, TO_TIMESTAMP('02-10-2021 19:41:51'), TO_TIMESTAMP('02-10-2021 19:50:04'), 2, 3, 9, 30, 10)
 SELECT 1 FROM DUAL;
 
+INSERT ALL
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (1, 1, 1, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (2, 4, 2, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (3, 2, 3, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (4, 8, 4, 3)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (5, 5, 5, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (6, 9, 6, 2)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (7, 3, 7, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (8, 6, 8, 2)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (9, 9, 9, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (10, 8, 10, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (11, 5, 11, 2)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (12, 7, 12, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (13, 4, 13, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (14, 8, 14, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (15, 1, 15, 2)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (16, 5, 16, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (17, 7, 17, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (18, 7, 18, 3)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (19, 2, 19, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (20, 5, 20, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (21, 8, 21, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (22, 8, 22, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (23, 5, 23, 2)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (24, 2, 24, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (25, 9, 25, 5)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (26, 6, 26, 1)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (27, 7, 27, 4)
+SELECT 1 FROM DUAL;
 /*INTO polozka_objednavky (c_polozka, pocet, c_objednavka, c_produkt) VALUES ()*/
 
-SELECT hodnota_dph FROM dph WHERE k_dph = 30;
+/* -------------------- Selecty ------------------------------------- */
+SELECT produkt.c_produkt,produkt.nazev, produkt.cena_bez_dph,(produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) AS cena_s_dph, produkt.c_dph, dph.k_dph, dph.hodnota_dph
+FROM produkt produkt
+    INNER JOIN dph dph
+        ON produkt.c_dph = dph.k_dph;
+        
+SELECT produkt.c_produkt,produkt.nazev, produkt.cena_bez_dph,(produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) AS cena_s_dph, produkt.c_dph, dph.k_dph, dph.hodnota_dph, provozovna.nazev
+FROM produkt produkt
+    INNER JOIN dph dph
+        ON produkt.c_dph = dph.k_dph
+    INNER JOIN provozovna provozovna
+        ON produkt.c_provozovna = provozovna.c_provozovna;
+     
+        
+SELECT smena.c_smena, objednavka.c_smena, objednavka.c_objednavka, objednavka.k_stav, stav.k_stav, stav.nazev
+FROM smena smena
+    INNER JOIN objednavka objednavka
+        ON smena.c_smena = objednavka.c_smena
+    INNER JOIN stav stav
+        ON objednavka.k_stav = stav.k_stav;
+        
+SELECT smena.c_smena, objednavka.c_smena, TO_CHAR(smena.zacatek, 'YYYY-MM-DD') AS datum , kuryr.jmeno, kuryr.prijmeni, auto.spz, COUNT(objednavka.c_objednavka) AS vyrizenych_objednavek, COUNT(objednavka.c_objednavka) * 40 AS odmena, auto.c_auto, smena.c_auto, kuryr.c_kuryr, smena.c_kuryr
+FROM smena smena
+    INNER JOIN objednavka objednavka
+        ON smena.c_smena = objednavka.c_smena
+    INNER JOIN auto auto
+        ON smena.c_auto = auto.c_auto
+    INNER JOIN kuryr kuryr
+        ON smena.c_kuryr = kuryr.c_kuryr
+    WHERE objednavka.k_stav = 10
+    GROUP BY smena.c_smena, objednavka.c_smena, smena.zacatek, kuryr.jmeno, kuryr.prijmeni, auto.spz, auto.c_auto, smena.c_auto, kuryr.c_kuryr, smena.c_kuryr;
+    
+SELECT objednavka.c_objednavka, provozovna.nazev AS restaurace, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(provozovna.ulice, ' '), provozovna.cislo_popisne),', '), provozovna.mesto), ' '), provozovna.pcs) AS adresa_restaurace, CONCAT(CONCAT(zakaznik.jmeno, ' '), zakaznik.prijmeni) AS zakaznik, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(zakaznik.ulice, ' '), zakaznik.cislo_popisne),', '), zakaznik.mesto), ' '), zakaznik.pcs) AS adresa_doruceni, stav.nazev AS stav, zpusob_platby.nazev_paltba
+FROM objednavka objednavka
+    INNER JOIN zpusob_platby zpusob_platby
+        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
+    INNER JOIN stav stav
+        ON objednavka.k_stav = stav.k_stav
+    INNER JOIN zakaznik zakaznik
+        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
+    INNER JOIN provozovna provozovna
+        ON objednavka.c_provozovna = provozovna.c_provozovna
+    INNER JOIN smena smena
+        ON objednavka.c_smena = smena.c_smena;
+    
+SELECT objednavka.c_objednavka, provozovna.nazev AS restaurace, CONCAT(CONCAT(zakaznik.jmeno, ' '), zakaznik.prijmeni) AS zakaznik, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(zakaznik.ulice, ' '), zakaznik.cislo_popisne),', '), zakaznik.mesto), ' '), zakaznik.pcs) AS adresa_doruceni, stav.nazev AS stav, zpusob_platby.nazev_paltba, CONCAT(CONCAT(kuryr.jmeno,' '), kuryr.prijmeni) AS kuryr, TO_CHAR(smena.zacatek, 'YYYY-MM-DD') AS datum
+FROM objednavka objednavka
+    INNER JOIN zpusob_platby zpusob_platby
+        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
+    INNER JOIN stav stav
+        ON objednavka.k_stav = stav.k_stav
+    INNER JOIN zakaznik zakaznik
+        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
+    INNER JOIN provozovna provozovna
+        ON objednavka.c_provozovna = provozovna.c_provozovna
+    INNER JOIN smena smena
+        ON objednavka.c_smena = smena.c_smena
+    INNER JOIN polozka_objednavky polozka
+        ON objednavka.c_objednavka = polozka.c_objednavka
+    INNER JOIN produkt produkt
+        ON polozka.c_produkt = produkt.c_produkt
+    INNER JOIN kuryr kuryr
+        ON smena.c_kuryr = kuryr.c_kuryr;
+  
+SELECT objednavka.c_objednavka, SUM((produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) * polozka.pocet) AS CELKOVA_CENA, polozka.pocet
+FROM objednavka objednavka
+    INNER JOIN zpusob_platby zpusob_platby
+        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
+    INNER JOIN stav stav
+        ON objednavka.k_stav = stav.k_stav
+    INNER JOIN zakaznik zakaznik
+        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
+    INNER JOIN provozovna provozovna
+        ON objednavka.c_provozovna = provozovna.c_provozovna
+    INNER JOIN smena smena
+        ON objednavka.c_smena = smena.c_smena
+    INNER JOIN polozka_objednavky polozka
+        ON objednavka.c_objednavka = polozka.c_objednavka
+    INNER JOIN produkt produkt
+        ON polozka.c_produkt = produkt.c_produkt
+    INNER JOIN dph dph
+        ON produkt.c_dph = dph.k_dph
+    GROUP BY objednavka.c_objednavka, polozka.pocet;
+        
 
 /* -------------------- Smazani tabulek ----------------------------- */
 DROP TABLE OBJEDNAVKA;
