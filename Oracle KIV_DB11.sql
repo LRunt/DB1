@@ -82,8 +82,7 @@ CREATE TABLE PRODUKT(
     c_produkt INTEGER PRIMARY KEY,
     nazev VARCHAR2(100 CHAR) NOT NULL,
     cena_bez_dph NUMBER(*, 2) NOT NULL,
-    /*cena_s_dph NUMBER(*, 2) AS (SELECT hodnota_dph FROM dph WHERE k_dph = c_dph),*/
-    /*cena_s_dph NUMBER(*, 2) AS (cena_bez_dph * 10(SELECT hodnota_dph FROM dph WHERE k_dph = c_dph)),*/
+    cena_s_dph NUMBER(*, 2) NOT NULL,
     c_provozovna INTEGER NOT NULL,
     c_dph INTEGER NOT NULL
 );
@@ -99,10 +98,10 @@ ALTER TABLE PRODUKT
 CREATE TABLE POLOZKA_OBJEDNAVKY(
     c_polozka INTEGER PRIMARY KEY,
     pocet INTEGER NOT NULL,
-    /*cena_ks_bez_dph NUMBER(*, 2) AS (SUM(SELECT cena_bez_dph FROM produkt GROUP BY cena_bez_dph)),
-    /*cena_ks_s_dph NUMBER(*, 2),
-    cena_celkem_bez_dph NUMBER(*, 2),
-    cena_celkem_s_dph NUMBER(*, 2),*/
+    cena_ks_bez_dph NUMBER(*, 2) NOT NULL,
+    cena_ks_s_dph NUMBER(*, 2) NOT NULL,
+    cena_celkem_bez_dph NUMBER(*, 2) AS (pocet * cena_ks_bez_dph),
+    cena_celkem_s_dph NUMBER(*, 2) AS (pocet * cena_ks_s_dph),
     c_objednavka INTEGER NOT NULL,
     c_produkt INTEGER NOT NULL
 );
@@ -127,7 +126,7 @@ CREATE TABLE STAV(
 
 CREATE TABLE ZPUSOB_PLATBY(
     k_platba INTEGER PRIMARY KEY,
-    nazev_paltba VARCHAR2(20 CHAR) NOT NULL
+    nazev_platba VARCHAR2(20 CHAR) NOT NULL
 );
 
 CREATE TABLE OBJEDNAVKA(
@@ -211,15 +210,15 @@ INSERT ALL
 SELECT 1 FROM DUAL; 
 
 INSERT ALL
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (1, 'Hovìzí svíèková na smetanì, kynutý knedlík', 152.15, 1, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (2, 'Hovìzí tatarák z mladého býèka, 4 ks topinek', 158.10, 1, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (3, 'Pilsner Urquell 12° z tanku', 38.71, 1, 30)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (4, 'Øízek z vepøové kotlety smažený na másle ', 177.65, 2, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (5, 'Steak z vepøové krkovice s hoøèiènou omáèkou', 237.15, 2, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (6, 'Žloutkový vìneèek', 62.1, 2, 10)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (7, '2x Dürüm s masem + 2x Coca-Cola 330ml', 214.2, 3, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (8, 'Coca-Cola - DÜRÜM MENU', 184.45, 3, 20)
-    INTO produkt (c_produkt, nazev, cena_bez_dph, c_provozovna, c_dph) VALUES (9, 'Lahmacun s masem a sýrem ', 130.05, 3, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (1, 'Hovìzí svíèková na smetanì, kynutý knedlík', 152.15, 179, 1, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (2, 'Hovìzí tatarák z mladého býèka, 4 ks topinek', 158.10, 186, 1, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (3, 'Pilsner Urquell 12° z tanku', 38.71, 49, 1, 30)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (4, 'Øízek z vepøové kotlety smažený na másle ', 177.65, 209, 2, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (5, 'Steak z vepøové krkovice s hoøèiènou omáèkou', 237.15, 279, 2, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (6, 'Žloutkový vìneèek', 62.1, 69, 2, 10)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (7, '2x Dürüm s masem + 2x Coca-Cola 330ml', 214.2, 252, 3, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (8, 'Coca-Cola - DÜRÜM MENU', 184.45, 217, 3, 20)
+    INTO produkt (c_produkt, nazev, cena_bez_dph, cena_s_dph, c_provozovna, c_dph) VALUES (9, 'Lahmacun s masem a sýrem ', 130.05, 153, 3, 20)
 SELECT 1 FROM DUAL;
 
 INSERT ALL
@@ -244,7 +243,7 @@ INSERT ALL
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (7, TO_TIMESTAMP('20-10-2021 11:45:54'), TO_TIMESTAMP('20-10-2021 12:09:15'), 1, 1, 3, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (8, TO_TIMESTAMP('20-10-2021 14:15:23'), TO_TIMESTAMP('20-10-2021 14:54:11'), 2, 2, 3, 10, 20)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (9, TO_TIMESTAMP('20-10-2021 20:14:14'), TO_TIMESTAMP('20-10-2021 20:54:48'), 3, 3, 3, 10, 10)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (10, TO_TIMESTAMP('02-09-2021 10:52:12'), TO_TIMESTAMP('02-09-2021 11:25:31'), 1, 3, 4, 10, 10)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (10, TO_TIMESTAMP('02-09-2021 10:52:12'), TO_TIMESTAMP('02-09-2021 11:25:31'), 1, 3, 4, 30, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (11, TO_TIMESTAMP('02-09-2021 12:43:13'), TO_TIMESTAMP('02-09-2021 13:12:45'), 3, 2, 4, 10, 20)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (12, TO_TIMESTAMP('02-09-2021 15:12:51'), TO_TIMESTAMP('02-09-2021 15:45:41'), 2, 1, 4, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (13, TO_TIMESTAMP('14-09-2021 09:52:15'), TO_TIMESTAMP('14-09-2021 10:12:55'), 1, 3, 5, 10, 10)
@@ -254,7 +253,7 @@ INSERT ALL
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (17, TO_TIMESTAMP('22-09-2021 13:25:16'), TO_TIMESTAMP('22-09-2021 13:59:18'), 3, 2, 6, 10, 20)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (18, TO_TIMESTAMP('22-09-2021 16:48:37'), TO_TIMESTAMP('22-09-2021 17:23:19'), 2, 3, 6, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (19, TO_TIMESTAMP('01-09-2021 16:12:42'), TO_TIMESTAMP('01-09-2021 16:42:19'), 1, 1, 7, 10, 30)
-    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (20, TO_TIMESTAMP('01-09-2021 18:09:15'), TO_TIMESTAMP('01-09-2021 18:59:08'), 2, 2, 7, 10, 20)
+    INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (20, TO_TIMESTAMP('01-09-2021 18:09:15'), TO_TIMESTAMP('01-09-2021 18:59:08'), 2, 2, 7, 30, 20)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (21, TO_TIMESTAMP('01-09-2021 19:00:48'), TO_TIMESTAMP('01-09-2021 19:42:00'), 3, 3, 7, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (22, TO_TIMESTAMP('17-09-2021 16:45:29'), TO_TIMESTAMP('17-09-2021 17:09:45'), 1, 3, 8, 10, 10)
     INTO objednavka (c_objednavka, cas_zadani, cas_vyrizeni, c_zakaznik, c_provozovna, c_smena, k_stav, k_zpusob_platby) VALUES (23, TO_TIMESTAMP('17-09-2021 18:43:18'), TO_TIMESTAMP('17-09-2021 19:05:14'), 2, 2, 8, 10, 20)
@@ -265,120 +264,69 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 INSERT ALL
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (1, 1, 1, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (2, 4, 2, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (3, 2, 3, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (4, 8, 4, 3)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (5, 5, 5, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (6, 9, 6, 2)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (7, 3, 7, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (8, 6, 8, 2)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (9, 9, 9, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (10, 8, 10, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (11, 5, 11, 2)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (12, 7, 12, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (13, 4, 13, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (14, 8, 14, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (15, 1, 15, 2)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (16, 5, 16, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (17, 7, 17, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (18, 7, 18, 3)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (19, 2, 19, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (20, 5, 20, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (21, 8, 21, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (22, 8, 22, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (23, 5, 23, 2)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (24, 2, 24, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (25, 9, 25, 5)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (26, 6, 26, 1)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet) VALUES (27, 7, 27, 4)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (1, 1, 1, 1, 152.15, 179)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (2, 4, 2, 1, 177.65, 209)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (3, 2, 3, 1, 158.1, 186)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (4, 8, 4, 3, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (5, 5, 5, 1, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (6, 9, 6, 2, 130.05, 153)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (7, 3, 7, 1, 38.71, 49)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (8, 6, 8, 2, 62.1, 69)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (9, 9, 9, 1, 130.05, 153)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (10, 8, 10, 1, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (11, 5, 11, 2, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (12, 7, 12, 1, 214.2, 252)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (13, 4, 13, 1, 177.65, 209)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (14, 8, 14, 1, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (15, 1, 15, 2, 152.15, 179)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (16, 5, 16, 1, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (17, 7, 17, 1, 214.2, 252)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (18, 7, 18, 3, 214.2, 252)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (19, 2, 19, 1, 158.1, 186)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (20, 5, 20, 1, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (21, 8, 21, 1, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (22, 8, 22, 1, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (23, 5, 23, 2, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (24, 2, 24, 1, 158.1, 186)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (25, 9, 25, 5, 130.05, 153)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (26, 6, 26, 1, 62.1, 69)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (27, 7, 27, 4, 214.2, 252)
 SELECT 1 FROM DUAL;
 /*INTO polozka_objednavky (c_polozka, pocet, c_objednavka, c_produkt) VALUES ()*/
 
-/* -------------------- Selecty ------------------------------------- */
-SELECT produkt.c_produkt,produkt.nazev, produkt.cena_bez_dph,(produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) AS cena_s_dph, produkt.c_dph, dph.k_dph, dph.hodnota_dph
-FROM produkt produkt
-    INNER JOIN dph dph
-        ON produkt.c_dph = dph.k_dph;
-        
-SELECT produkt.c_produkt,produkt.nazev, produkt.cena_bez_dph,(produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) AS cena_s_dph, produkt.c_dph, dph.k_dph, dph.hodnota_dph, provozovna.nazev
-FROM produkt produkt
-    INNER JOIN dph dph
-        ON produkt.c_dph = dph.k_dph
-    INNER JOIN provozovna provozovna
-        ON produkt.c_provozovna = provozovna.c_provozovna;
-     
-        
-SELECT smena.c_smena, objednavka.c_smena, objednavka.c_objednavka, objednavka.k_stav, stav.k_stav, stav.nazev
-FROM smena smena
-    INNER JOIN objednavka objednavka
-        ON smena.c_smena = objednavka.c_smena
-    INNER JOIN stav stav
-        ON objednavka.k_stav = stav.k_stav;
-        
-SELECT smena.c_smena, objednavka.c_smena, TO_CHAR(smena.zacatek, 'YYYY-MM-DD') AS datum , kuryr.jmeno, kuryr.prijmeni, auto.spz, COUNT(objednavka.c_objednavka) AS vyrizenych_objednavek, COUNT(objednavka.c_objednavka) * 40 AS odmena, auto.c_auto, smena.c_auto, kuryr.c_kuryr, smena.c_kuryr
-FROM smena smena
-    INNER JOIN objednavka objednavka
-        ON smena.c_smena = objednavka.c_smena
-    INNER JOIN auto auto
-        ON smena.c_auto = auto.c_auto
-    INNER JOIN kuryr kuryr
-        ON smena.c_kuryr = kuryr.c_kuryr
-    WHERE objednavka.k_stav = 10
+/* -------------------- Selecty a pohledy ------------------------------------- */
+/* SMENY USKUTECNENE V MESICI ZARI */
+CREATE VIEW smeny_v_mesici_zari AS        
+    SELECT smena.c_smena, objednavka.c_smena AS c_smeny, TO_CHAR(smena.zacatek, 'DD-MM-YYYY') AS datum , kuryr.jmeno, kuryr.prijmeni, auto.spz, COUNT(objednavka.c_objednavka) AS vyrizenych_objednavek, COUNT(objednavka.c_objednavka) * 40 AS odmena, auto.c_auto AS auto, smena.c_auto, kuryr.c_kuryr, smena.c_kuryr AS kuryr
+    FROM smena smena
+        INNER JOIN objednavka objednavka
+            ON smena.c_smena = objednavka.c_smena
+        INNER JOIN auto auto
+            ON smena.c_auto = auto.c_auto
+        INNER JOIN kuryr kuryr
+            ON smena.c_kuryr = kuryr.c_kuryr
+        WHERE objednavka.k_stav = 10 AND smena.zacatek BETWEEN '01-09-2021 00:00:01' AND '30-09-2021 23:59:59'
     GROUP BY smena.c_smena, objednavka.c_smena, smena.zacatek, kuryr.jmeno, kuryr.prijmeni, auto.spz, auto.c_auto, smena.c_auto, kuryr.c_kuryr, smena.c_kuryr;
-    
-SELECT objednavka.c_objednavka, provozovna.nazev AS restaurace, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(provozovna.ulice, ' '), provozovna.cislo_popisne),', '), provozovna.mesto), ' '), provozovna.pcs) AS adresa_restaurace, CONCAT(CONCAT(zakaznik.jmeno, ' '), zakaznik.prijmeni) AS zakaznik, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(zakaznik.ulice, ' '), zakaznik.cislo_popisne),', '), zakaznik.mesto), ' '), zakaznik.pcs) AS adresa_doruceni, stav.nazev AS stav, zpusob_platby.nazev_paltba
-FROM objednavka objednavka
-    INNER JOIN zpusob_platby zpusob_platby
-        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
-    INNER JOIN stav stav
-        ON objednavka.k_stav = stav.k_stav
-    INNER JOIN zakaznik zakaznik
-        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
-    INNER JOIN provozovna provozovna
-        ON objednavka.c_provozovna = provozovna.c_provozovna
-    INNER JOIN smena smena
-        ON objednavka.c_smena = smena.c_smena;
-    
-SELECT objednavka.c_objednavka, provozovna.nazev AS restaurace, CONCAT(CONCAT(zakaznik.jmeno, ' '), zakaznik.prijmeni) AS zakaznik, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(zakaznik.ulice, ' '), zakaznik.cislo_popisne),', '), zakaznik.mesto), ' '), zakaznik.pcs) AS adresa_doruceni, stav.nazev AS stav, zpusob_platby.nazev_paltba, CONCAT(CONCAT(kuryr.jmeno,' '), kuryr.prijmeni) AS kuryr, TO_CHAR(smena.zacatek, 'YYYY-MM-DD') AS datum
-FROM objednavka objednavka
-    INNER JOIN zpusob_platby zpusob_platby
-        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
-    INNER JOIN stav stav
-        ON objednavka.k_stav = stav.k_stav
-    INNER JOIN zakaznik zakaznik
-        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
-    INNER JOIN provozovna provozovna
-        ON objednavka.c_provozovna = provozovna.c_provozovna
-    INNER JOIN smena smena
-        ON objednavka.c_smena = smena.c_smena
-    INNER JOIN polozka_objednavky polozka
-        ON objednavka.c_objednavka = polozka.c_objednavka
-    INNER JOIN produkt produkt
-        ON polozka.c_produkt = produkt.c_produkt
-    INNER JOIN kuryr kuryr
-        ON smena.c_kuryr = kuryr.c_kuryr;
-  
-SELECT objednavka.c_objednavka, SUM((produkt.cena_bez_dph / (100 - dph.hodnota_dph) * 100) * polozka.pocet) AS CELKOVA_CENA, polozka.pocet
-FROM objednavka objednavka
-    INNER JOIN zpusob_platby zpusob_platby
-        ON objednavka.k_zpusob_platby = zpusob_platby.k_platba
-    INNER JOIN stav stav
-        ON objednavka.k_stav = stav.k_stav
-    INNER JOIN zakaznik zakaznik
-        ON objednavka.c_zakaznik = zakaznik.c_zakaznik
-    INNER JOIN provozovna provozovna
-        ON objednavka.c_provozovna = provozovna.c_provozovna
-    INNER JOIN smena smena
-        ON objednavka.c_smena = smena.c_smena
-    INNER JOIN polozka_objednavky polozka
-        ON objednavka.c_objednavka = polozka.c_objednavka
-    INNER JOIN produkt produkt
-        ON polozka.c_produkt = produkt.c_produkt
-    INNER JOIN dph dph
-        ON produkt.c_dph = dph.k_dph
-    GROUP BY objednavka.c_objednavka, polozka.pocet;
-        
+
+CREATE VIEW objednavky_pavla_novaka AS    
+    SELECT objednavka.c_objednavka, TO_CHAR(objednavka.cas_vyrizeni, 'DD-MM-YYYY') AS datum, CONCAT(CONCAT(zakaznik.jmeno, ' '), zakaznik.prijmeni) AS zakaznik, CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(zakaznik.ulice, ' '), zakaznik.cislo_popisne),', '), zakaznik.mesto), ' '), zakaznik.pcs) AS adresa_doruceni, SUM(polozka.cena_celkem_s_dph) AS cena, stav.nazev AS stav, platba.nazev_platba AS zpusob_platby, provozovna.nazev AS restaurace, CONCAT(CONCAT(kuryr.jmeno, ' '), kuryr.prijmeni) AS kuryr
+    FROM objednavka objednavka
+       INNER JOIN zakaznik zakaznik
+           ON zakaznik.c_zakaznik = objednavka.c_zakaznik
+       INNER JOIN polozka_objednavky polozka
+          ON polozka.c_objednavka = objednavka.c_objednavka
+       INNER JOIN stav stav
+           ON stav.k_stav = objednavka.k_stav
+       INNER JOIN zpusob_platby platba
+           ON platba.k_platba = objednavka.k_zpusob_platby
+       INNER JOIN provozovna provozovna
+           ON provozovna.c_provozovna = objednavka.c_provozovna
+       INNER JOIN smena smena
+          ON smena.c_smena = objednavka.c_smena
+       INNER JOIN kuryr kuryr
+           ON smena.c_kuryr = kuryr.c_kuryr
+        WHERE zakaznik.jmeno LIKE 'Pavel' AND zakaznik.prijmeni LIKE 'Novák'
+    GROUP BY objednavka.c_objednavka, objednavka.cas_vyrizeni, zakaznik.jmeno, zakaznik.prijmeni, zakaznik.ulice, zakaznik.cislo_popisne, zakaznik.mesto, zakaznik.pcs, stav.nazev, platba.nazev_platba, provozovna.nazev, kuryr.jmeno, kuryr.prijmeni;
 
 /* -------------------- Smazani tabulek ----------------------------- */
 DROP TABLE OBJEDNAVKA;
