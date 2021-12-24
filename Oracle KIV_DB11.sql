@@ -133,8 +133,6 @@ CREATE TABLE OBJEDNAVKA(
     c_objednavka INTEGER PRIMARY KEY,
     cas_zadani TIMESTAMP(0) NOT NULL,
     cas_vyrizeni TIMESTAMP(0) NOT NULL,
-    /*cena_celkem_bez_dph NUMBER(*, 2),*/
-    /*cena_celkem_s_dph NUMBER(*, 2),*/
     c_zakaznik INTEGER NOT NULL,
     c_provozovna INTEGER NOT NULL,
     c_smena INTEGER NOT NULL,
@@ -268,6 +266,7 @@ INSERT ALL
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (2, 4, 2, 1, 177.65, 209)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (3, 2, 3, 1, 158.1, 186)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (4, 8, 4, 3, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (31, 7, 4, 1, 214.2, 252)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (5, 5, 5, 1, 237.15, 279)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (6, 9, 6, 2, 130.05, 153)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (7, 3, 7, 1, 38.71, 49)
@@ -275,15 +274,18 @@ INSERT ALL
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (9, 9, 9, 1, 130.05, 153)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (10, 8, 10, 1, 184.45, 217)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (11, 5, 11, 2, 237.15, 279)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (12, 7, 12, 1, 214.2, 252)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (13, 4, 13, 1, 177.65, 209)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (14, 8, 14, 1, 184.45, 217)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (15, 1, 15, 2, 152.15, 179)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (16, 5, 16, 1, 237.15, 279)
-    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (17, 7, 17, 1, 214.2, 252)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (12, 3, 12, 4, 38.71, 49)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (28, 1, 12, 2, 152.15, 179)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (29, 2, 12, 2, 158.1, 186)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (13, 9, 13, 1, 130.05, 153)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (14, 6, 14, 1, 62.1, 69)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (15, 8, 15, 2, 184.45, 217)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (16, 2, 16, 1, 158.1, 186)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (17, 4, 17, 1, 177.65, 209)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (18, 7, 18, 3, 214.2, 252)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (19, 2, 19, 1, 158.1, 186)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (20, 5, 20, 1, 237.15, 279)
+    INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (30, 4, 20, 1, 177.65, 209)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (21, 8, 21, 1, 184.45, 217)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (22, 8, 22, 1, 184.45, 217)
     INTO polozka_objednavky (c_polozka, c_produkt, c_objednavka, pocet, cena_ks_bez_dph, cena_ks_s_dph) VALUES (23, 5, 23, 2, 237.15, 279)
@@ -327,6 +329,16 @@ CREATE VIEW objednavky_pavla_novaka AS
            ON smena.c_kuryr = kuryr.c_kuryr
         WHERE zakaznik.jmeno LIKE 'Pavel' AND zakaznik.prijmeni LIKE 'Novák'
     GROUP BY objednavka.c_objednavka, objednavka.cas_vyrizeni, zakaznik.jmeno, zakaznik.prijmeni, zakaznik.ulice, zakaznik.cislo_popisne, zakaznik.mesto, zakaznik.pcs, stav.nazev, platba.nazev_platba, provozovna.nazev, kuryr.jmeno, kuryr.prijmeni;
+/* -------------------- Scenare ------------------------------------- */
+UPDATE zakaznik SET ulice = 'Kardinála Berana', cislo_popisne = '1092/14' WHERE jmeno LIKE 'Pavel' AND prijmeni LIKE 'Novák';
+DELETE FROM kuryr WHERE jmeno LIKE 'Adam' AND prijmeni LIKE 'Urban';
+DELETE FROM provozovna WHERE nazev LIKE 'ALANYA KEBAB';
+DELETE FROM zpusob_platby WHERE k_platba = 20;
+UPDATE produkt SET cena_bez_dph = 45.82, cena_s_dph = 58 WHERE c_produkt = 3;
+
+/*--------------------- Smazani pohledu ---------------------------- */
+DROP VIEW objednavky_pavla_novaka;
+DROP VIEW smeny_v_mesici_zari;
 
 /* -------------------- Smazani tabulek ----------------------------- */
 DROP TABLE OBJEDNAVKA;
